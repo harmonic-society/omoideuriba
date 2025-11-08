@@ -67,7 +67,7 @@ export default function ContactPage() {
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Partial<Record<keyof ContactFormData, string>> = {}
-        error.errors.forEach((err) => {
+        error.issues.forEach((err) => {
           const field = err.path[0] as keyof ContactFormData
           fieldErrors[field] = err.message
         })
