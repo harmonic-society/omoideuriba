@@ -71,6 +71,7 @@ export default function ImageUpload({ value, onChange, onKeyChange }: ImageUploa
       reader.readAsDataURL(file)
 
       // アップロードURL取得
+      console.log('Requesting upload URL for:', file.name, file.type)
       const uploadResponse = await fetch('/api/admin/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -82,12 +83,15 @@ export default function ImageUpload({ value, onChange, onKeyChange }: ImageUploa
 
       if (!uploadResponse.ok) {
         const data = await uploadResponse.json()
+        console.error('Upload URL error:', data)
         throw new Error(data.error || 'アップロードURLの取得に失敗しました')
       }
 
       const { uploadUrl, publicUrl, key } = await uploadResponse.json()
+      console.log('Upload URL received:', { publicUrl, key })
 
       // S3にアップロード
+      console.log('Starting S3 upload...')
       const xhr = new XMLHttpRequest()
 
       xhr.upload.addEventListener('progress', (e) => {
@@ -99,13 +103,19 @@ export default function ImageUpload({ value, onChange, onKeyChange }: ImageUploa
 
       await new Promise<void>((resolve, reject) => {
         xhr.onload = () => {
+          console.log('S3 upload response:', xhr.status, xhr.statusText)
           if (xhr.status === 200) {
+            console.log('S3 upload successful')
             resolve()
           } else {
-            reject(new Error('アップロードに失敗しました'))
+            console.error('S3 upload failed:', xhr.status, xhr.responseText)
+            reject(new Error(`アップロードに失敗しました (${xhr.status}): ${xhr.statusText}`))
           }
         }
-        xhr.onerror = () => reject(new Error('アップロードに失敗しました'))
+        xhr.onerror = () => {
+          console.error('S3 upload error')
+          reject(new Error('アップロードに失敗しました'))
+        }
 
         xhr.open('PUT', uploadUrl)
         xhr.setRequestHeader('Content-Type', file.type)
