@@ -245,6 +245,23 @@ NextAuth.jsを使用した認証システム：
 
 #### トラブルシューティング
 
+##### Elixir環境として誤検出される場合
+
+Renderが誤ってElixir/Phoenixプロジェクトとして検出する場合：
+
+1. **既存のサービスを削除**して新規作成
+2. サービス作成時に以下を**手動で設定**：
+   - **Environment**: `Node`
+   - **Build Command**: `npm install && npx prisma migrate deploy && npm run build`
+   - **Start Command**: `npm start`
+   - **Node Version**: 環境変数に `NODE_VERSION=18.17.0` を追加
+
+3. または、Render Dashboardで既存サービスの設定を変更：
+   - Settings → Environment → `Node` に変更
+   - Settings → Build & Deploy → Build Commandを上記に変更
+
+##### その他のエラー
+
 - **ビルドエラー**: Renderが正しくNode.js環境を検出しているか確認
 - **データベース接続エラー**: `DATABASE_URL` が正しく設定されているか確認
 - **認証エラー**: `NEXTAUTH_SECRET` と `NEXTAUTH_URL` が設定されているか確認
