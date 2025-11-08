@@ -17,6 +17,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     { name: 'カテゴリ管理', href: '/admin/categories', icon: '🏷️' },
     { name: '注文管理', href: '/admin/orders', icon: '🛒' },
     { name: 'ユーザー管理', href: '/admin/users', icon: '👥' },
+    { name: 'お問い合わせ', href: '/admin/contacts', icon: '✉️' },
   ]
 
   return (

@@ -126,6 +126,29 @@ enum OrderStatus {
   CANCELLED
 }
 
+model Contact {
+  id          String        @id @default(cuid())
+  name        String
+  email       String
+  subject     String
+  message     String        @db.Text
+  status      ContactStatus @default(UNREAD)
+  adminNote   String?       @db.Text
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("contacts")
+}
+
+enum ContactStatus {
+  UNREAD
+  READ
+  IN_PROGRESS
+  RESOLVED
+}
+
 enum UserRole {
   USER
   ADMIN
