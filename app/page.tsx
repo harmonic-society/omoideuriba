@@ -1,8 +1,30 @@
 import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import ProductCard from '@/components/ProductCard'
+import { prisma } from '@/lib/prisma'
 
-export default function Home() {
+export const dynamic = 'force-dynamic'
+
+export default async function Home() {
+  // 新着商品（最新8件）
+  const newProducts = await prisma.product.findMany({
+    where: { isActive: true },
+    include: { category: true },
+    orderBy: { createdAt: 'desc' },
+    take: 8,
+  })
+
+  // おすすめ商品（最大8件）
+  const featuredProducts = await prisma.product.findMany({
+    where: {
+      isActive: true,
+      isFeatured: true,
+    },
+    include: { category: true },
+    orderBy: { createdAt: 'desc' },
+    take: 8,
+  })
   return (
     <>
       <Header />
@@ -26,6 +48,48 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* おすすめ商品セクション */}
+        {featuredProducts.length > 0 && (
+          <section className="py-16 bg-gradient-to-r from-retro-yellow/20 via-retro-pink/20 to-retro-purple/20">
+            <div className="container mx-auto px-4">
+              <h3 className="text-4xl font-bold text-center text-vintage-brown mb-12 font-pixel">
+                ⭐ おすすめアイテム
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {featuredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+              <div className="text-center mt-8">
+                <Link href="/products" className="btn-retro-pink inline-block">
+                  もっと見る →
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* 新着商品セクション */}
+        {newProducts.length > 0 && (
+          <section className="py-16">
+            <div className="container mx-auto px-4">
+              <h3 className="text-4xl font-bold text-center text-vintage-brown mb-12 font-pixel">
+                🆕 ニューアイテム
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {newProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+              <div className="text-center mt-8">
+                <Link href="/products" className="btn-retro-blue inline-block">
+                  すべての商品を見る →
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* カテゴリセクション */}
         <section className="py-16 bg-retro-purple/20">

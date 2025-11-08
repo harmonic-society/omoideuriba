@@ -21,6 +21,7 @@ interface Product {
   imageUrl?: string | null
   categoryId: string
   isActive: boolean
+  isFeatured: boolean
 }
 
 interface ProductFormProps {
@@ -45,6 +46,7 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
     imageUrl: product?.imageUrl || '',
     categoryId: product?.categoryId || categories[0]?.id || '',
     isActive: product?.isActive !== undefined ? product.isActive : true,
+    isFeatured: product?.isFeatured || false,
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -239,6 +241,21 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
           />
           <label htmlFor="isActive" className="font-bold text-vintage-brown">
             公開する
+          </label>
+        </div>
+
+        {/* おすすめ商品 */}
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            id="isFeatured"
+            name="isFeatured"
+            checked={formData.isFeatured}
+            onChange={handleChange}
+            className="w-5 h-5 rounded border-2 border-vintage-brown"
+          />
+          <label htmlFor="isFeatured" className="font-bold text-vintage-brown">
+            ⭐ おすすめ商品として表示
           </label>
         </div>
 

@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     await requireAdmin()
 
     const body = await request.json()
-    const { name, slug, description, price, stock, imageUrl, images, categoryId, isActive } = body
+    const { name, slug, description, price, stock, imageUrl, images, categoryId, isActive, isFeatured } = body
 
     // バリデーション
     if (!name || !slug || !description || !price || !categoryId) {
@@ -77,6 +77,7 @@ export async function POST(request: Request) {
         images: images ? JSON.stringify(images) : null,
         categoryId,
         isActive: isActive !== undefined ? isActive : true,
+        isFeatured: isFeatured || false,
       },
       include: { category: true },
     })

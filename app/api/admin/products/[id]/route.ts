@@ -56,6 +56,7 @@ export async function PUT(
       images,
       categoryId,
       isActive,
+      isFeatured,
     } = body;
 
     // 既存商品チェック
@@ -91,6 +92,7 @@ export async function PUT(
         images: images !== undefined ? JSON.stringify(images) : existing.images,
         categoryId: categoryId || existing.categoryId,
         isActive: isActive !== undefined ? isActive : existing.isActive,
+        isFeatured: isFeatured !== undefined ? isFeatured : existing.isFeatured,
       },
       include: { category: true },
     });
