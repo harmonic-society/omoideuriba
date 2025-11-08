@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCartStore } from '@/lib/store/cart'
+import { Decimal } from '@prisma/client/runtime/library'
 
 interface ProductCardProps {
   product: {
@@ -10,7 +11,7 @@ interface ProductCardProps {
     name: string
     slug: string
     description: string
-    price: number
+    price: number | Decimal
     stock: number
     imageUrl?: string | null
     category: {
@@ -22,6 +23,11 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem)
 
+  // Decimal型をnumberに変換
+  const price = typeof product.price === 'number'
+    ? product.price
+    : Number(product.price.toString())
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -30,7 +36,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       id: product.id,
       productId: product.id,
       name: product.name,
-      price: Number(product.price),
+      price,
       imageUrl: product.imageUrl || undefined,
     })
 
@@ -77,7 +83,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* 価格と在庫 */}
         <div className="flex items-center justify-between mb-4">
           <span className="text-2xl font-bold text-retro-pink">
-            ¥{product.price.toLocaleString()}
+            ¥{price.toLocaleString()}
           </span>
           <span className="text-sm text-vintage-brown">
             在庫: {product.stock}
