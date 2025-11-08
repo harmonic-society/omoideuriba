@@ -3,6 +3,9 @@ import Footer from '@/components/Footer'
 import ProductCard from '@/components/ProductCard'
 import { prisma } from '@/lib/prisma'
 
+// 動的レンダリングを強制（ビルド時のプリレンダリングを無効化）
+export const dynamic = 'force-dynamic'
+
 export default async function ProductsPage() {
   const products = await prisma.product.findMany({
     where: { isActive: true },

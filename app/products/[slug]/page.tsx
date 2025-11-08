@@ -4,6 +4,9 @@ import Footer from '@/components/Footer'
 import ProductDetail from '@/components/ProductDetail'
 import { prisma } from '@/lib/prisma'
 
+// 動的レンダリングを強制（ビルド時のプリレンダリングを無効化）
+export const dynamic = 'force-dynamic'
+
 interface ProductPageProps {
   params: {
     slug: string
