@@ -115,12 +115,13 @@ export default function CategoriesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-4xl font-bold text-vintage-brown font-pixel">
+      {/* ページヘッダー - モバイル対応 */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 md:mb-8">
+        <h2 className="text-2xl md:text-4xl font-bold text-vintage-brown font-pixel">
           カテゴリ管理
         </h2>
         {!showForm && (
-          <button onClick={() => setShowForm(true)} className="btn-retro-pink">
+          <button onClick={() => setShowForm(true)} className="btn-retro-pink w-full sm:w-auto">
             ➕ 新しいカテゴリを追加
           </button>
         )}

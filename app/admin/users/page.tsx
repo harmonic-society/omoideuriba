@@ -72,13 +72,15 @@ export default function UsersPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-4xl font-bold text-vintage-brown font-pixel">
+      {/* ページヘッダー */}
+      <div className="mb-6 md:mb-8">
+        <h2 className="text-2xl md:text-4xl font-bold text-vintage-brown font-pixel">
           ユーザー管理
         </h2>
       </div>
 
-      <div className="card-retro">
+      {/* デスクトップ: テーブル表示 */}
+      <div className="hidden md:block card-retro">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -141,6 +143,72 @@ export default function UsersPage() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* モバイル: カード表示 */}
+      <div className="md:hidden space-y-4">
+        {users.length === 0 ? (
+          <div className="card-retro text-center py-12">
+            <p className="text-vintage-brown text-lg">ユーザーがいません</p>
+          </div>
+        ) : (
+          users.map((user) => (
+            <div key={user.id} className="card-retro p-4">
+              {/* ヘッダー: アバター + 名前 + ロールバッジ */}
+              <div className="flex items-start gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-retro-purple text-white flex items-center justify-center font-bold border-2 border-vintage-brown flex-shrink-0 text-xl">
+                  {user.name?.charAt(0) || user.email.charAt(0)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-bold text-vintage-brown text-lg mb-1 break-words">
+                    {user.name || '未設定'}
+                  </h3>
+                  <p className="text-sm text-vintage-brown/70 break-all">
+                    {user.email}
+                  </p>
+                </div>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-bold flex-shrink-0 ${
+                    user.role === 'ADMIN'
+                      ? 'bg-retro-pink text-white'
+                      : 'bg-retro-blue text-white'
+                  }`}
+                >
+                  {user.role === 'ADMIN' ? '管理者' : '一般'}
+                </span>
+              </div>
+
+              {/* 詳細情報 */}
+              <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
+                <div>
+                  <span className="text-vintage-brown/70 block mb-1">注文数</span>
+                  <span className="text-vintage-brown font-bold">{user._count.orders}件</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-vintage-brown/70 block mb-1">登録日</span>
+                  <span className="text-vintage-brown font-bold">
+                    {new Date(user.createdAt).toLocaleDateString('ja-JP')}
+                  </span>
+                </div>
+              </div>
+
+              {/* ロール変更 */}
+              <div>
+                <label className="block text-sm font-bold text-vintage-brown mb-2">
+                  ロール変更
+                </label>
+                <select
+                  value={user.role}
+                  onChange={(e) => handleRoleChange(user.id, e.target.value as 'USER' | 'ADMIN')}
+                  className="input-retro w-full"
+                >
+                  <option value="USER">一般ユーザー</option>
+                  <option value="ADMIN">管理者</option>
+                </select>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       <div className="mt-6 p-4 bg-retro-yellow/20 border-2 border-vintage-brown rounded-retro">

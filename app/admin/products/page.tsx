@@ -12,11 +12,12 @@ export default async function ProductsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-4xl font-bold text-vintage-brown font-pixel">
+      {/* ページヘッダー - モバイル対応 */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 md:mb-8">
+        <h2 className="text-2xl md:text-4xl font-bold text-vintage-brown font-pixel">
           商品管理
         </h2>
-        <Link href="/admin/products/new" className="btn-retro-pink">
+        <Link href="/admin/products/new" className="btn-retro-pink w-full sm:w-auto text-center">
           ➕ 新しい商品を追加
         </Link>
       </div>
