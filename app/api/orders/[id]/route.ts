@@ -14,7 +14,22 @@ export async function GET(
       where: {
         id: params.id,
       },
-      include: {
+      select: {
+        id: true,
+        userId: true,
+        paypalOrderId: true,
+        totalAmount: true,
+        shippingFee: true,
+        status: true,
+        shippingName: true,
+        shippingPostalCode: true,
+        shippingPrefecture: true,
+        shippingCity: true,
+        shippingAddressLine1: true,
+        shippingAddressLine2: true,
+        shippingPhoneNumber: true,
+        createdAt: true,
+        updatedAt: true,
         items: {
           include: {
             product: {

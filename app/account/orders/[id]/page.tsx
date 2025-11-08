@@ -66,6 +66,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
     if (status === 'authenticated') {
       fetchOrder()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, params.id])
 
   const fetchOrder = async () => {
