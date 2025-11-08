@@ -19,8 +19,8 @@ export async function POST(req: Request) {
       postalCode,
       prefecture,
       city,
-      address,
-      building,
+      address: addressLine1,
+      building: addressLine2,
     } = validatedData
 
     // 既存ユーザーチェック
@@ -48,8 +48,8 @@ export async function POST(req: Request) {
         postalCode: postalCode || null,
         prefecture: prefecture || null,
         city: city || null,
-        address: address || null,
-        building: building || null,
+        addressLine1: addressLine1 || null,
+        addressLine2: addressLine2 || null,
       },
     })
 

@@ -40,7 +40,7 @@ export default function ShippingForm({ initialData, onSubmit, loading }: Shippin
       }
     } catch (err) {
       if (err instanceof ZodError) {
-        setErrors(prev => ({ ...prev, [name]: err.errors[0]?.message || '' }))
+        setErrors(prev => ({ ...prev, [name]: err.issues[0]?.message || '' }))
       }
     }
   }

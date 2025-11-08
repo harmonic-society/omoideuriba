@@ -19,8 +19,8 @@ export async function GET() {
         postalCode: true,
         prefecture: true,
         city: true,
-        address: true,
-        building: true,
+        addressLine1: true,
+        addressLine2: true,
         image: true,
         role: true,
         createdAt: true,
@@ -60,8 +60,8 @@ export async function PUT(request: Request) {
       postalCode,
       prefecture,
       city,
-      address,
-      building,
+      address: addressLine1,
+      building: addressLine2,
       image,
     } = validatedData
 
@@ -89,8 +89,8 @@ export async function PUT(request: Request) {
         postalCode: postalCode || null,
         prefecture: prefecture || null,
         city: city || null,
-        address: address || null,
-        building: building || null,
+        addressLine1: addressLine1 || null,
+        addressLine2: addressLine2 || null,
         image: image || null,
       },
       select: {
@@ -101,8 +101,8 @@ export async function PUT(request: Request) {
         postalCode: true,
         prefecture: true,
         city: true,
-        address: true,
-        building: true,
+        addressLine1: true,
+        addressLine2: true,
         image: true,
       },
     })

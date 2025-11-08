@@ -13,6 +13,12 @@ declare module 'next-auth' {
       name: string
       image?: string
       role: 'USER' | 'ADMIN'
+      phoneNumber?: string | null
+      postalCode?: string | null
+      prefecture?: string | null
+      city?: string | null
+      addressLine1?: string | null
+      addressLine2?: string | null
     }
   }
 }
