@@ -71,6 +71,7 @@ export default function Header() {
                   className="flex items-center gap-2 bg-white px-3 py-2 rounded-retro hover:bg-retro-yellow transition-colors"
                 >
                   {session.user.image ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
                     <img
                       src={session.user.image}
                       alt={session.user.name || 'User'}

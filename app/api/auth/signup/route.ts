@@ -66,7 +66,7 @@ export async function POST(req: Request) {
   } catch (error) {
     // Zodバリデーションエラー
     if (error instanceof ZodError) {
-      const firstError = error.errors[0]
+      const firstError = error.issues[0]
       return NextResponse.json(
         { error: firstError.message, field: firstError.path[0] },
         { status: 400 }
