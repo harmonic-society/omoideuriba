@@ -6,6 +6,10 @@ export const paypalOptions = {
   currency: 'JPY',
   intent: 'capture',
   locale: 'ja_JP',
+  components: 'buttons',
+  enableFunding: 'card,paypal',
+  disableFunding: '',
+  dataClientToken: undefined,
 }
 
 /**

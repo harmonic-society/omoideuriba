@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
 import { useCartStore } from '@/lib/store/cart'
+import { paypalOptions } from '@/lib/paypal'
 import OrderSummary from '@/components/checkout/OrderSummary'
 import Link from 'next/link'
 import type { ShippingAddress } from '@/lib/validations/checkout'
@@ -159,7 +160,18 @@ export default function ConfirmOrderPage() {
     console.error('Error type:', typeof err)
     console.error('Error message:', err?.message || 'No message')
 
-    const errorMessage = err?.message || err?.toString() || 'PayPal決済でエラーが発生しました'
+    let errorMessage = err?.message || err?.toString() || 'PayPal決済でエラーが発生しました'
+
+    // カード追加エラーの場合の詳細メッセージ
+    if (errorMessage.includes('カードを追加できません') || errorMessage.includes('card')) {
+      errorMessage = 'クレジットカードの登録に失敗しました。以下をご確認ください:\n\n' +
+        '• カード情報が正しく入力されているか\n' +
+        '• カードの有効期限が切れていないか\n' +
+        '• カードの利用限度額に余裕があるか\n' +
+        '• 別のクレジットカードでお試しください\n' +
+        '• PayPal残高でのお支払いもご利用いただけます'
+    }
+
     setError(`PayPalエラー: ${errorMessage}`)
   }
 
@@ -208,7 +220,7 @@ export default function ConfirmOrderPage() {
       {error && (
         <div className="bg-red-100 border-2 border-red-500 text-red-700 px-4 py-3 rounded-retro mb-6">
           <p className="font-bold mb-2">エラー</p>
-          <p>{error}</p>
+          <p className="whitespace-pre-line">{error}</p>
         </div>
       )}
 
@@ -318,6 +330,9 @@ export default function ConfirmOrderPage() {
                     currency: 'JPY',
                     intent: 'capture',
                     locale: 'ja_JP',
+                    components: 'buttons',
+                    enableFunding: 'card,paypal',
+                    disableFunding: '',
                   }}
                 >
                   <PayPalButtons
@@ -327,6 +342,7 @@ export default function ConfirmOrderPage() {
                       shape: 'rect',
                       label: 'paypal',
                     }}
+                    fundingSource={undefined}
                     createOrder={handleCreateOrder}
                     onApprove={handleApprove}
                     onError={handleError}
