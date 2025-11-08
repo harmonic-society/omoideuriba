@@ -1,25 +1,27 @@
 import { NextResponse } from 'next/server'
 import { hash } from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
+import { signUpSchema } from '@/lib/validations/auth'
+import { ZodError } from 'zod'
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json()
+    const body = await req.json()
 
-    // バリデーション
-    if (!name || !email || !password) {
-      return NextResponse.json(
-        { error: 'すべてのフィールドを入力してください' },
-        { status: 400 }
-      )
-    }
+    // Zodバリデーション
+    const validatedData = signUpSchema.parse(body)
 
-    if (password.length < 6) {
-      return NextResponse.json(
-        { error: 'パスワードは6文字以上にしてください' },
-        { status: 400 }
-      )
-    }
+    const {
+      name,
+      email,
+      password,
+      phoneNumber,
+      postalCode,
+      prefecture,
+      city,
+      address,
+      building,
+    } = validatedData
 
     // 既存ユーザーチェック
     const existingUser = await prisma.user.findUnique({
@@ -42,6 +44,12 @@ export async function POST(req: Request) {
         name,
         email,
         password: hashedPassword,
+        phoneNumber: phoneNumber || null,
+        postalCode: postalCode || null,
+        prefecture: prefecture || null,
+        city: city || null,
+        address: address || null,
+        building: building || null,
       },
     })
 
@@ -56,6 +64,15 @@ export async function POST(req: Request) {
       { status: 201 }
     )
   } catch (error) {
+    // Zodバリデーションエラー
+    if (error instanceof ZodError) {
+      const firstError = error.errors[0]
+      return NextResponse.json(
+        { error: firstError.message, field: firstError.path[0] },
+        { status: 400 }
+      )
+    }
+
     console.error('Signup error:', error)
     return NextResponse.json(
       { error: 'ユーザー登録に失敗しました' },

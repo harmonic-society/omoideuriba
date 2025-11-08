@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE `users` ADD COLUMN `phoneNumber` VARCHAR(191) NULL,
+    ADD COLUMN `postalCode` VARCHAR(191) NULL,
+    ADD COLUMN `prefecture` VARCHAR(191) NULL,
+    ADD COLUMN `city` VARCHAR(191) NULL,
+    ADD COLUMN `address` VARCHAR(191) NULL,
+    ADD COLUMN `building` VARCHAR(191) NULL;

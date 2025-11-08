@@ -9,10 +9,21 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { secret, email } = body
 
+    // デバッグ用: 環境変数の存在確認
+    if (!process.env.SETUP_SECRET) {
+      return NextResponse.json(
+        { error: 'SETUP_SECRET環境変数が設定されていません。Renderの環境変数を確認してください。' },
+        { status: 500 }
+      )
+    }
+
     // 環境変数でシークレットを設定
     if (secret !== process.env.SETUP_SECRET) {
       return NextResponse.json(
-        { error: '認証に失敗しました' },
+        {
+          error: '認証に失敗しました',
+          hint: 'シークレットキーが一致しません'
+        },
         { status: 403 }
       )
     }
