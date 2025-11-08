@@ -27,43 +27,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 特徴セクション */}
-        <section className="py-16">
-          <div className="container mx-auto px-4">
-            <h3 className="text-4xl font-bold text-center text-vintage-brown mb-12 font-pixel">
-              思い出売場の特徴
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* カード1 */}
-              <div className="card-retro text-center">
-                <div className="text-6xl mb-4">🎮</div>
-                <h4 className="text-2xl font-bold text-retro-pink mb-3">レトログッズ専門</h4>
-                <p className="text-vintage-brown">
-                  80年代〜2000年代の懐かしいグッズが大集合！
-                </p>
-              </div>
-
-              {/* カード2 */}
-              <div className="card-retro text-center">
-                <div className="text-6xl mb-4">💝</div>
-                <h4 className="text-2xl font-bold text-retro-blue mb-3">安全な取引</h4>
-                <p className="text-vintage-brown">
-                  PayPal決済で安心・安全なお買い物体験
-                </p>
-              </div>
-
-              {/* カード3 */}
-              <div className="card-retro text-center">
-                <div className="text-6xl mb-4">✨</div>
-                <h4 className="text-2xl font-bold text-retro-yellow mb-3">簡単出品</h4>
-                <p className="text-vintage-brown">
-                  お家に眠っているレトログッズを簡単に出品できます
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* カテゴリセクション */}
         <section className="py-16 bg-retro-purple/20">
           <div className="container mx-auto px-4">
