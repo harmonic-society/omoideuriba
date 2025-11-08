@@ -109,6 +109,14 @@ export default function Header() {
                       )}
 
                       <Link
+                        href="/account"
+                        className="block px-3 py-2 text-vintage-brown hover:bg-retro-blue hover:text-white font-bold transition-colors rounded"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        ⚙️ アカウント設定
+                      </Link>
+
+                      <Link
                         href="/orders"
                         className="block px-3 py-2 text-vintage-brown hover:bg-retro-blue hover:text-white font-bold transition-colors rounded"
                         onClick={() => setShowDropdown(false)}
