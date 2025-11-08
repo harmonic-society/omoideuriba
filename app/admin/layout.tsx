@@ -5,7 +5,7 @@ import Sidebar from '@/components/admin/Sidebar'
 export default async function AdminLayout({
   children,
 }: {
-  children: React.Node
+  children: React.ReactNode
 }) {
   const user = await getCurrentUser()
 

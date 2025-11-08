@@ -142,6 +142,7 @@ export default function ImageUpload({ value, onChange, onKeyChange }: ImageUploa
     <div className="space-y-4">
       {preview ? (
         <div className="relative">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={preview}
             alt="Preview"
