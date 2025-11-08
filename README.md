@@ -201,24 +201,65 @@ NextAuth.jsを使用した認証システム：
 
 ### Renderへのデプロイ
 
-1. Renderアカウントを作成
-2. 新しいWeb Serviceを作成
-3. リポジトリを接続
-4. 環境変数を設定
-5. ビルドコマンド: `npm install && npm run build`
-6. 起動コマンド: `npm start`
+このプロジェクトには `render.yaml` が含まれているため、自動的にデプロイ設定が適用されます。
 
-### 環境変数の設定
+#### 手順
 
-本番環境では以下の環境変数を設定してください：
+1. **Renderアカウントを作成**
+   - [Render](https://render.com)にアクセスしてアカウント作成
 
-- `DATABASE_URL`
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- `AWS_S3_BUCKET`
-- `AWS_S3_REGION`
-- `NEXTAUTH_SECRET`
-- `NEXTAUTH_URL`
+2. **新しいWeb Serviceを作成**
+   - Dashboard → "New" → "Web Service"を選択
+   - GitHubリポジトリを接続
+
+3. **リポジトリを選択**
+   - `harmonic-society/omoideuriba` を選択
+
+4. **環境変数を設定**
+
+   Render Dashboard の Environment タブで以下を設定：
+
+   ```
+   DATABASE_URL=mysql://user:password@host:3306/database
+   AWS_ACCESS_KEY_ID=your-access-key
+   AWS_SECRET_ACCESS_KEY=your-secret-key
+   AWS_S3_BUCKET=omoideuriba-media-prod
+   AWS_S3_REGION=us-east-1
+   NEXTAUTH_SECRET=your-generated-secret
+   NEXTAUTH_URL=https://your-app.onrender.com
+   ```
+
+   **重要**: `NEXTAUTH_SECRET` は必ず新しく生成してください：
+   ```bash
+   openssl rand -base64 32
+   ```
+
+5. **デプロイ**
+   - "Create Web Service" をクリック
+   - `render.yaml` の設定が自動的に適用されます
+   - ビルドコマンド: `npm install && npx prisma migrate deploy && npm run build`
+   - 起動コマンド: `npm start`
+
+6. **データベースマイグレーション**
+   - 初回デプロイ時、Prismaが自動的にマイグレーションを実行します
+
+#### トラブルシューティング
+
+- **ビルドエラー**: Renderが正しくNode.js環境を検出しているか確認
+- **データベース接続エラー**: `DATABASE_URL` が正しく設定されているか確認
+- **認証エラー**: `NEXTAUTH_SECRET` と `NEXTAUTH_URL` が設定されているか確認
+
+### 環境変数の詳細
+
+| 変数名 | 説明 | 例 |
+|--------|------|-----|
+| `DATABASE_URL` | MySQL接続文字列 | `mysql://user:pass@host:3306/db` |
+| `AWS_ACCESS_KEY_ID` | AWS アクセスキー | `AKIAIOSFODNN7EXAMPLE` |
+| `AWS_SECRET_ACCESS_KEY` | AWS シークレットキー | `wJalrXUtnFEMI/K7MDENG/...` |
+| `AWS_S3_BUCKET` | S3バケット名 | `omoideuriba-media-prod` |
+| `AWS_S3_REGION` | S3リージョン | `us-east-1` |
+| `NEXTAUTH_SECRET` | NextAuth暗号化キー | ランダムな文字列 |
+| `NEXTAUTH_URL` | アプリケーションURL | `https://your-app.onrender.com` |
 
 ## 🤝 コントリビューション
 
