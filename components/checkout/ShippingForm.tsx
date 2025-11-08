@@ -55,7 +55,7 @@ export default function ShippingForm({ initialData, onSubmit, loading }: Shippin
     } catch (err) {
       if (err instanceof ZodError) {
         const newErrors: Record<string, string> = {}
-        err.errors.forEach(error => {
+        err.issues.forEach((error: any) => {
           if (error.path[0]) {
             newErrors[error.path[0].toString()] = error.message
           }

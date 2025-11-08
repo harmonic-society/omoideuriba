@@ -5,16 +5,17 @@ import { prisma } from '@/lib/prisma'
 // カテゴリ更新
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin()
+    const { id } = await params
 
     const body = await request.json()
     const { name, slug, description } = body
 
     // 既存カテゴリチェック
-    const existing = await prisma.category.findUnique({ where: { id: params.id } })
+    const existing = await prisma.category.findUnique({ where: { id } })
     if (!existing) {
       return NextResponse.json({ error: 'カテゴリが見つかりません' }, { status: 404 })
     }
@@ -32,7 +33,7 @@ export async function PUT(
 
     // カテゴリ更新
     const category = await prisma.category.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name: name || existing.name,
         slug: slug || existing.slug,
@@ -53,14 +54,15 @@ export async function PUT(
 // カテゴリ削除
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin()
+    const { id } = await params
 
     // 既存カテゴリチェック
     const existing = await prisma.category.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { _count: { select: { products: true } } },
     })
 
@@ -77,7 +79,7 @@ export async function DELETE(
     }
 
     // カテゴリ削除
-    await prisma.category.delete({ where: { id: params.id } })
+    await prisma.category.delete({ where: { id } })
 
     return NextResponse.json({ message: 'カテゴリを削除しました' })
   } catch (error) {

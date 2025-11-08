@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'リクエストが不正です', details: error.errors },
+        { error: 'リクエストが不正です', details: error.issues },
         { status: 400 }
       )
     }
