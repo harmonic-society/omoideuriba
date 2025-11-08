@@ -25,25 +25,60 @@ export const paypalConfig = {
  * PayPal APIの認証トークンを取得
  */
 export async function getPayPalAccessToken(): Promise<string> {
+  console.log('=== PayPal Access Token Request ===')
+  console.log('API Base:', paypalConfig.apiBase)
+  console.log('Mode:', paypalConfig.mode)
+  console.log('Client ID exists:', !!paypalConfig.clientId)
+  console.log('Client Secret exists:', !!paypalConfig.clientSecret)
+  console.log('Client ID length:', paypalConfig.clientId?.length || 0)
+  console.log('Client Secret length:', paypalConfig.clientSecret?.length || 0)
+
+  if (!paypalConfig.clientId || !paypalConfig.clientSecret) {
+    throw new Error('PayPal認証情報が設定されていません。NEXT_PUBLIC_PAYPAL_CLIENT_IDとPAYPAL_CLIENT_SECRETを確認してください。')
+  }
+
   const auth = Buffer.from(
     `${paypalConfig.clientId}:${paypalConfig.clientSecret}`
   ).toString('base64')
 
-  const response = await fetch(`${paypalConfig.apiBase}/v1/oauth2/token`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Basic ${auth}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: 'grant_type=client_credentials',
-  })
+  const url = `${paypalConfig.apiBase}/v1/oauth2/token`
+  console.log('Request URL:', url)
 
-  if (!response.ok) {
-    throw new Error('PayPalアクセストークンの取得に失敗しました')
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${auth}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'grant_type=client_credentials',
+    })
+
+    console.log('Response status:', response.status)
+    console.log('Response statusText:', response.statusText)
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('PayPal token error response:', errorText)
+
+      let errorMessage = 'PayPalアクセストークンの取得に失敗しました'
+      try {
+        const errorData = JSON.parse(errorText)
+        errorMessage = `PayPal API Error: ${errorData.error_description || errorData.error || errorText}`
+      } catch {
+        errorMessage = `PayPal API Error (${response.status}): ${errorText}`
+      }
+
+      throw new Error(errorMessage)
+    }
+
+    const data = await response.json()
+    console.log('Access token obtained successfully')
+    return data.access_token
+  } catch (error) {
+    console.error('PayPal access token exception:', error)
+    throw error
   }
-
-  const data = await response.json()
-  return data.access_token
 }
 
 /**
