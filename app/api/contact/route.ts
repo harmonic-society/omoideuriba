@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { contactFormSchema } from '@/lib/validations/contact'
+import { sendContactConfirmation, sendContactNotification } from '@/lib/email'
 import { z } from 'zod'
 
 export async function POST(request: Request) {
@@ -22,6 +23,28 @@ export async function POST(request: Request) {
     })
 
     console.log('Contact created:', contact.id)
+
+    // メール送信（非同期、エラーでも処理は継続）
+    Promise.all([
+      // お客様への自動返信メール
+      sendContactConfirmation({
+        to: validatedData.email,
+        name: validatedData.name,
+        subject: validatedData.subject,
+        message: validatedData.message,
+      }),
+      // 管理者への通知メール
+      sendContactNotification({
+        contactId: contact.id,
+        name: validatedData.name,
+        email: validatedData.email,
+        subject: validatedData.subject,
+        message: validatedData.message,
+      }),
+    ]).catch((error) => {
+      console.error('Email sending failed:', error)
+      // メール送信失敗してもお問い合わせは保存されているので続行
+    })
 
     return NextResponse.json(
       {
