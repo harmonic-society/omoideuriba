@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Decimal } from '@prisma/client/runtime/library'
 import ImageUpload from './ImageUpload'
 
@@ -31,6 +32,9 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  // カテゴリが存在しない場合の警告
+  const noCategoriesError = categories.length === 0
 
   const [formData, setFormData] = useState({
     name: product?.name || '',
@@ -93,6 +97,19 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="card-retro max-w-3xl">
+      {noCategoriesError && (
+        <div className="bg-yellow-100 border-2 border-yellow-600 text-yellow-800 px-4 py-3 rounded-retro mb-6">
+          <p className="font-bold mb-2">⚠️ カテゴリが存在しません</p>
+          <p className="text-sm mb-3">商品を作成するには、まずカテゴリを作成する必要があります。</p>
+          <Link
+            href="/admin/categories"
+            className="inline-block px-4 py-2 bg-retro-blue text-white rounded-retro font-bold hover:bg-retro-purple transition-colors"
+          >
+            カテゴリ管理ページへ
+          </Link>
+        </div>
+      )}
+
       {error && (
         <div className="bg-red-100 border-2 border-red-500 text-red-700 px-4 py-3 rounded-retro mb-6">
           {error}
@@ -191,13 +208,23 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
             onChange={handleChange}
             className="input-retro"
             required
+            disabled={noCategoriesError}
           >
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
+            {categories.length === 0 ? (
+              <option value="">カテゴリがありません</option>
+            ) : (
+              categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))
+            )}
           </select>
+          {noCategoriesError && (
+            <p className="text-sm text-red-600 mt-1">
+              先にカテゴリを作成してください
+            </p>
+          )}
         </div>
 
         {/* 公開状態 */}
@@ -246,7 +273,7 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
       <div className="flex gap-4 mt-8">
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || noCategoriesError}
           className="btn-retro-pink flex-1 disabled:opacity-50"
         >
           {loading ? '保存中...' : (product ? '更新する' : '作成する')}
