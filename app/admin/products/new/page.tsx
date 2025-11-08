@@ -1,6 +1,9 @@
 import { prisma } from '@/lib/prisma'
 import ProductForm from '@/components/admin/ProductForm'
 
+// 動的レンダリングを強制
+export const dynamic = 'force-dynamic'
+
 export default async function NewProductPage() {
   const categories = await prisma.category.findMany({
     orderBy: { name: 'asc' },

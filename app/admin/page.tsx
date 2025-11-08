@@ -1,6 +1,9 @@
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 
+// 動的レンダリングを強制
+export const dynamic = 'force-dynamic'
+
 export default async function AdminDashboard() {
   // 統計情報を取得
   const [productsCount, categoriesCount, usersCount, ordersCount] = await Promise.all([

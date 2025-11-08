@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import ProductForm from '@/components/admin/ProductForm'
 
+// 動的レンダリングを強制
+export const dynamic = 'force-dynamic'
+
 interface EditProductPageProps {
   params: {
     id: string
