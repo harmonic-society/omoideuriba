@@ -19,8 +19,8 @@ export default async function AdminDashboard() {
   const stats = [
     { name: '商品数', value: productsCount, icon: '📦', color: 'bg-retro-pink', href: '/admin/products' },
     { name: 'カテゴリ数', value: categoriesCount, icon: '🏷️', color: 'bg-retro-blue', href: '/admin/categories' },
-    { name: 'ユーザー数', value: usersCount, icon: '👥', color: 'bg-retro-yellow' },
-    { name: '注文数', value: ordersCount, icon: '🛒', color: 'bg-retro-purple' },
+    { name: 'ユーザー数', value: usersCount, icon: '👥', color: 'bg-retro-yellow', href: '/admin/users' },
+    { name: '注文数', value: ordersCount, icon: '🛒', color: 'bg-retro-purple', href: '/admin/orders' },
   ]
 
   return (
