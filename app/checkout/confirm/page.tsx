@@ -52,38 +52,55 @@ export default function ConfirmOrderPage() {
   const total = subtotal + SHIPPING_FEE
 
   const handleCreateOrder = async () => {
+    console.log('=== Creating PayPal Order ===')
+    console.log('Shipping Address:', shippingAddress)
+    console.log('Checkout Items:', checkoutItems)
+    console.log('Total:', total)
+
     if (!shippingAddress) {
+      console.error('Shipping address is missing')
       throw new Error('配送先情報がありません')
     }
 
     setError('')
 
-    const response = await fetch('/api/paypal/create-order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        items: checkoutItems.map(item => ({
-          productId: item.id,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-        shippingAddress,
-        shippingFee: SHIPPING_FEE,
-        totalAmount: total,
-      }),
-    })
+    try {
+      const response = await fetch('/api/paypal/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: checkoutItems.map(item => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          shippingAddress,
+          shippingFee: SHIPPING_FEE,
+          totalAmount: total,
+        }),
+      })
 
-    if (!response.ok) {
+      if (!response.ok) {
+        const data = await response.json()
+        console.error('Create order failed:', data)
+        throw new Error(data.error || 'PayPal注文の作成に失敗しました')
+      }
+
       const data = await response.json()
-      throw new Error(data.error || 'PayPal注文の作成に失敗しました')
+      console.log('PayPal order created successfully:', data.orderId)
+      return data.orderId
+    } catch (error) {
+      console.error('Create order exception:', error)
+      throw error
     }
-
-    const data = await response.json()
-    return data.orderId
   }
 
   const handleApprove = async (data: any) => {
+    console.log('=== Approving PayPal Payment ===')
+    console.log('PayPal Order ID:', data.orderID)
+
     if (!shippingAddress) {
+      console.error('Shipping address is missing during approval')
       setError('配送先情報がありません')
       return
     }
@@ -99,7 +116,7 @@ export default function ConfirmOrderPage() {
           paypalOrderId: data.orderID,
           orderData: {
             items: checkoutItems.map(item => ({
-              productId: item.id,
+              productId: item.productId,
               quantity: item.quantity,
               price: item.price,
             })),
@@ -112,10 +129,12 @@ export default function ConfirmOrderPage() {
 
       if (!response.ok) {
         const errorData = await response.json()
+        console.error('Capture order failed:', errorData)
         throw new Error(errorData.error || '注文の確定に失敗しました')
       }
 
       const result = await response.json()
+      console.log('Order captured successfully:', result)
 
       // セッションストレージをクリア
       sessionStorage.removeItem('shippingAddress')
@@ -135,9 +154,24 @@ export default function ConfirmOrderPage() {
   }
 
   const handleError = (err: any) => {
-    console.error('PayPal error:', err)
-    setError('PayPal決済でエラーが発生しました')
+    console.error('=== PayPal Error ===')
+    console.error('Error details:', err)
+    console.error('Error type:', typeof err)
+    console.error('Error message:', err?.message || 'No message')
+
+    const errorMessage = err?.message || err?.toString() || 'PayPal決済でエラーが発生しました'
+    setError(`PayPalエラー: ${errorMessage}`)
   }
+
+  // PayPal SDKの読み込みを確認
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      console.log('PayPal Client ID:', process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ? 'Set' : 'Not set')
+      console.log('Agreed to terms:', agreedToTerms)
+      console.log('Processing:', processing)
+      console.log('Checkout items count:', checkoutItems.length)
+    }
+  }, [agreedToTerms, processing, checkoutItems])
 
   if (status === 'loading' || !shippingAddress || checkoutItems.length === 0) {
     return (
@@ -271,27 +305,36 @@ export default function ConfirmOrderPage() {
             )}
 
             {agreedToTerms && !processing && (
-              <PayPalScriptProvider
-                options={{
-                  clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
-                  currency: 'JPY',
-                  intent: 'capture',
-                  locale: 'ja_JP',
-                }}
-              >
-                <PayPalButtons
-                  style={{
-                    layout: 'vertical',
-                    color: 'gold',
-                    shape: 'rect',
-                    label: 'paypal',
+              <>
+                {!process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID && (
+                  <div className="bg-red-100 border-2 border-red-500 text-red-700 px-4 py-3 rounded-retro mb-4">
+                    <p className="font-bold">PayPal設定エラー</p>
+                    <p className="text-sm">PayPal Client IDが設定されていません。</p>
+                  </div>
+                )}
+                <PayPalScriptProvider
+                  options={{
+                    clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
+                    currency: 'JPY',
+                    intent: 'capture',
+                    locale: 'ja_JP',
                   }}
-                  createOrder={handleCreateOrder}
-                  onApprove={handleApprove}
-                  onError={handleError}
-                  disabled={!agreedToTerms || processing}
-                />
-              </PayPalScriptProvider>
+                >
+                  <PayPalButtons
+                    style={{
+                      layout: 'vertical',
+                      color: 'gold',
+                      shape: 'rect',
+                      label: 'paypal',
+                    }}
+                    createOrder={handleCreateOrder}
+                    onApprove={handleApprove}
+                    onError={handleError}
+                    disabled={!agreedToTerms || processing}
+                    forceReRender={[agreedToTerms, processing, total]}
+                  />
+                </PayPalScriptProvider>
+              </>
             )}
           </div>
         </div>

@@ -59,7 +59,7 @@ export default function CheckoutPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: items.map(item => ({
-            productId: item.id,
+            productId: item.productId,
             quantity: item.quantity,
           })),
         }),
