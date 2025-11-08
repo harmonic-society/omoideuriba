@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=DotGothic16&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-vintage-cream text-vintage-brown font-retro;
+  }
+}
+
+@layer components {
+  .btn-retro {
+    @apply px-6 py-3 rounded-retro font-bold text-white shadow-retro transition-all duration-200;
+    @apply hover:shadow-retro-hover hover:-translate-y-1 hover:translate-x-1;
+  }
+
+  .btn-retro-pink {
+    @apply btn-retro bg-retro-pink;
+  }
+
+  .btn-retro-blue {
+    @apply btn-retro bg-retro-blue;
+  }
+
+  .btn-retro-yellow {
+    @apply btn-retro bg-retro-yellow text-vintage-brown;
+  }
+
+  .card-retro {
+    @apply bg-white rounded-retro shadow-retro p-6 border-2 border-vintage-brown;
+    @apply hover:shadow-retro-hover transition-all duration-200;
+  }
+
+  .input-retro {
+    @apply w-full px-4 py-2 rounded-retro border-2 border-vintage-brown;
+    @apply focus:outline-none focus:border-retro-pink focus:ring-2 focus:ring-retro-pink/20;
+  }
+
+  .tag-retro {
+    @apply inline-block px-3 py-1 rounded-full text-sm font-medium;
+  }
+}
+
+/* レトロなアニメーション */
+@keyframes bounce-retro {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-bounce-retro {
+  animation: bounce-retro 2s ease-in-out infinite;
+}
