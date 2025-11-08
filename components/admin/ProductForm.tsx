@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Decimal } from '@prisma/client/runtime/library'
+import ImageUpload from './ImageUpload'
 
 interface Category {
   id: string
@@ -214,19 +215,14 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
           </label>
         </div>
 
-        {/* 画像URL */}
+        {/* 画像アップロード */}
         <div className="md:col-span-2">
-          <label htmlFor="imageUrl" className="block font-bold text-vintage-brown mb-2">
-            画像URL
+          <label className="block font-bold text-vintage-brown mb-4">
+            商品画像
           </label>
-          <input
-            type="url"
-            id="imageUrl"
-            name="imageUrl"
+          <ImageUpload
             value={formData.imageUrl}
-            onChange={handleChange}
-            className="input-retro"
-            placeholder="https://example.com/image.jpg"
+            onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
           />
         </div>
 
